@@ -15,7 +15,8 @@ void handle_error(const char *message) {
     exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
     if (argc != 2) {
         fprintf(stderr, "Uso: %s <puerto>\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
         } else {
             printf("Paquete ICMP no reconocido\n");
         }
-    }
+    
 
     // Cerrar socket
     close(sockfd);
