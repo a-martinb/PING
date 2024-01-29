@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 
-#define MAX_BUF_SIZE 1024
+#define MAX_BUF_SIZE 2048 // Aumentamos el tamaño del buffer
 
 int main() {
     int server_socket;
