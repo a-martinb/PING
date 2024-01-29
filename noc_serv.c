@@ -42,7 +42,11 @@ int main() {
         // Recibir datos del cliente
         socklen_t client_addr_len = sizeof(client_addr);
         memset(message, 0, sizeof(message));
-        recvfrom(server_socket, message, MAX_BUF_SIZE, 0, (struct sockaddr*)&client_addr, &client_addr_len);
+        ssize_t bytes_received = recvfrom(server_socket, message, MAX_BUF_SIZE, 0, (struct sockaddr*)&client_addr, &client_addr_len);
+        if (bytes_received < 0) {
+            perror("Error al recibir datos del cliente");
+            continue;
+        }
 
         // Obtener el tiempo actual
         struct timeval tv;
@@ -50,10 +54,14 @@ int main() {
         long start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 
         // Construir la respuesta al cliente
-        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %lu bytes, Direccion IP del cliente: %s, ICMP_SEQ=%s, TIME=%ld ms", strlen(message), inet_ntoa(client_addr.sin_addr), message, start_time);
+        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%zd, TIME=%ld ms", bytes_received, inet_ntoa(client_addr.sin_addr), bytes_received, start_time);
 
         // Enviar la respuesta al cliente
-        sendto(server_socket, message, strlen(message), 0, (struct sockaddr*)&client_addr, sizeof(client_addr));
+        ssize_t bytes_sent = sendto(server_socket, message, strlen(message), 0, (struct sockaddr*)&client_addr, sizeof(client_addr));
+        if (bytes_sent < 0) {
+            perror("Error al enviar la respuesta al cliente");
+            continue;
+        }
     }
 
     close(server_socket);
