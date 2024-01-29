@@ -3,9 +3,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <netinet/ip_icmp.h>
-#include <netdb.h>
+#include <netinet/in.h>
 
+#define PORT 12345 // Mismo puerto que el servidor
 #define BUFFER_SIZE 1024
 
 void handle_error(const char *message) {
@@ -14,8 +14,8 @@ void handle_error(const char *message) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        fprintf(stderr, "Uso: %s <hostname/IP> <puerto>\n", argv[0]);
+    if (argc != 2) {
+        fprintf(stderr, "Uso: %s <mensaje>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -31,35 +31,31 @@ int main(int argc, char *argv[]) {
     // Configurar dirección del servidor
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(atoi(argv[2]));
-
-    struct hostent *server = gethostbyname(argv[1]);
-    if (server == NULL) {
-        fprintf(stderr, "Error: No se pudo resolver el nombre del host\n");
-        exit(EXIT_FAILURE);
+    serv_addr.sin_port = htons(PORT);
+    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+        handle_error("Dirección IP no válida");
     }
-    memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length);
 
     // Conectar al servidor
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {
         handle_error("Error al conectar al servidor");
     }
 
-    printf("Conexión establecida con el servidor %s:%s\n", argv[1], argv[2]);
+    printf("Conexión establecida con el servidor en %s:%d\n", "127.0.0.1", PORT);
 
     // Enviar datos al servidor
-    char *data = "Datos enviados desde el cliente";
-    if (send(sockfd, data, strlen(data), 0) == -1) {
+    if (send(sockfd, argv[1], strlen(argv[1]), 0) == -1) {
         handle_error("Error al enviar datos al servidor");
     }
 
-    printf("Datos enviados al servidor\n");
+    printf("Datos enviados al servidor: %s\n", argv[1]);
 
     // Recibir respuesta del servidor
     if ((recv_len = recv(sockfd, buffer, BUFFER_SIZE, 0)) == -1) {
         handle_error("Error al recibir respuesta del servidor");
     }
 
+    buffer[recv_len] = '\0'; // Agregar terminador de cadena
     printf("Respuesta recibida del servidor: %s\n", buffer);
 
     // Cerrar socket
@@ -67,3 +63,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
