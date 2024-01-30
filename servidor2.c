@@ -77,11 +77,11 @@ int main() {
             perror("Error al enviar la respuesta al cliente");
         }
 
-        // Cerrar el socket del cliente
-        close(client_socket);
+        // No cerrar el socket del cliente para permitir la recepción de más paquetes
+
     }
 
-    // Cerrar el socket del servidor
+    // Cerrar el socket del servidor (este código nunca se ejecutará en este bucle)
     close(server_socket);
 
     return 0;
