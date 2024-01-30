@@ -43,7 +43,7 @@ int main() {
 
     printf("Conectado al servidor\n");
 
-    // Enviar paquetes ICMP al servidor continuamente
+    // Enviar y recibir paquetes ICMP al servidor
     int icmp_seq = 0;
     while (1) {
         // Incrementar el número de secuencia ICMP
@@ -59,7 +59,6 @@ int main() {
         }
 
         // Recibir la respuesta del servidor
-        memset(message, 0, sizeof(message));
         ssize_t bytes_received = recv(client_socket, message, MAX_BUF_SIZE, 0);
         if (bytes_received < 0) {
             perror("Error al recibir la respuesta del servidor");
@@ -78,3 +77,4 @@ int main() {
 
     return 0;
 }
+
