@@ -1,27 +1,36 @@
 import socket
+import time
 
-# Solicitar al usuario ingresar el puerto
-while True:
-    try:
-        PORT = int(input("Ingrese el puerto de escucha del servidor: "))
-        break
-    except ValueError:
-        print("Por favor, ingrese un número válido para el puerto.")
+def main():
+    # Solicitar al usuario ingresar el puerto del servidor
+    server_port = int(input("Ingrese el puerto del servidor: "))
 
-# Configuración del servidor
-HOST = '127.0.0.1'  # Dirección IP del servidor
+    # Crear un socket UDP/IP
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# Crear un socket UDP
-with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server_socket:
-    # Enlazar el socket a la dirección y puerto
-    server_socket.bind((HOST, PORT))
-    print(f'Servidor UDP en ejecución en {HOST}:{PORT}')
+    # Enlazar el socket al puerto
+    server_socket.bind(('localhost', server_port))
+
+    print(f"Servidor UDP en ejecución en el puerto {server_port}")
 
     while True:
         # Recibir datos del cliente
         data, client_address = server_socket.recvfrom(1024)
-        print(f'Datos ICMP simulados recibidos del cliente {client_address}: {data.decode()}')
 
-        # Responder al cliente
-        response = 'Paquete ICMP recibido por el servidor'
-        server_socket.sendto(response.encode(), client_address)
+        # Obtener el tiempo actual
+        start_time = int(time.time() * 1000)
+
+        # Obtener información del cliente
+        client_ip = client_address[0]
+
+        # Decodificar los datos recibidos
+        icmp_seq = data.decode("utf-8")
+
+        # Construir la respuesta
+        response = f"Tamaño del paquete recibido: {len(icmp_seq)}, Direccion IP del cliente: {client_ip}, ICMP_SEQ={icmp_seq}, TIME={start_time} ms"
+
+        # Enviar la respuesta al cliente
+        server_socket.sendto(response.encode("utf-8"), client_address)
+
+if __name__ == "__main__":
+    main()

@@ -1,30 +1,37 @@
 import socket
+import time
 
-# Solicitar al usuario ingresar el puerto
-while True:
-    try:
-        PORT = int(input("Ingrese el puerto del servidor: "))
-        break
-    except ValueError:
-        print("Por favor, ingrese un número válido para el puerto.")
+def main():
+    # Solicitar al usuario ingresar el puerto del servidor
+    server_port = int(input("Ingrese el puerto del servidor: "))
 
-# Configuración del servidor
-HOST = '127.0.0.1'  # Dirección IP del servidor
+    # Crear un socket UDP/IP
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# Crear un socket UDP
-with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as client_socket:
+    print(f"Cliente UDP en ejecución")
+
+    icmp_seq = 0
     while True:
-        # Solicitar al usuario ingresar un mensaje para simular un paquete ICMP
-        message = input("Ingrese un mensaje ICMP simulado para enviar al servidor (o 'exit' para salir): ")
+        # Incrementar el número de secuencia ICMP
+        icmp_seq += 1
 
-        # Enviar el mensaje simulado al servidor
-        client_socket.sendto(message.encode(), (HOST, PORT))
+        # Construir el mensaje ICMP simulado
+        message = f"ICMP_SEQ={icmp_seq}"
 
-        # Salir si el usuario ingresa 'exit'
-        if message.lower() == 'exit':
-            break
+        # Enviar el mensaje al servidor
+        client_socket.sendto(message.encode("utf-8"), ('localhost', server_port))
 
-        # No se espera una respuesta del servidor para los mensajes ICMP simulados
-        print("Mensaje ICMP simulado enviado al servidor.")
+        # Recibir la respuesta del servidor
+        data, server_address = client_socket.recvfrom(1024)
+        response = data.decode("utf-8")
 
-print("Cliente cerrado.")
+        # Obtener el tiempo actual
+        end_time = int(time.time() * 1000)
+
+        print(f"Respuesta del servidor: {response}")
+
+        # Esperar un tiempo antes de enviar el próximo paquete (opcional)
+        time.sleep(1)
+
+if __name__ == "__main__":
+    main()
