@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 
-#define MAX_BUF_SIZE 1024
+#define MAX_BUF_SIZE 2048 // Aumentamos el tamaño del buffer
 
 int main() {
     int server_socket, client_socket;
@@ -69,7 +69,7 @@ int main() {
         long start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 
         // Construir la respuesta al cliente
-        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%s, TIME=%ld ms", bytes_received, inet_ntoa(client_addr.sin_addr), message, start_time);
+        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%d, TIME=%ld ms", bytes_received, inet_ntoa(client_addr.sin_addr), 0, start_time);
 
         // Enviar la respuesta al cliente
         ssize_t bytes_sent = send(client_socket, message, strlen(message), 0);
