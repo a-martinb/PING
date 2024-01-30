@@ -58,12 +58,10 @@ int main() {
             exit(EXIT_FAILURE);
         }
 
-        // Recibir la respuesta del servidor
-        ssize_t bytes_received = recv(client_socket, message, MAX_BUF_SIZE, 0);
-        if (bytes_received < 0) {
-            perror("Error al recibir la respuesta del servidor");
-            exit(EXIT_FAILURE);
-        }
+        // Esperar la respuesta del servidor
+        memset(message, 0, sizeof(message));
+        recvfrom(client_socket, message, MAX_BUF_SIZE, 0, NULL, NULL);
+        
 
         // Imprimir la respuesta del servidor
         printf("Respuesta del servidor: %s\n", message);
