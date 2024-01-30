@@ -1,40 +1,53 @@
 import socket
+import time
 
-# Solicitar al usuario ingresar el puerto
-while True:
-    try:
-        PORT = int(input("Ingrese el puerto de escucha del servidor: "))
-        break
-    except ValueError:
-        print("Por favor, ingrese un número válido para el puerto.")
+def main():
+    # Solicitar al usuario ingresar la dirección IP del servidor y el puerto
+    server_ip = input("Ingrese la dirección IP del servidor: ")
+    server_port = int(input("Ingrese el puerto del servidor: "))
 
-# Configuración del servidor
-HOST = '127.0.0.1'  # Dirección IP del servidor
+    # Crear un socket TCP/IP
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Crear un socket TCP
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-    # Enlazar el socket a la dirección y puerto
-    server_socket.bind((HOST, PORT))
-    print(f'Servidor TCP en ejecución en {HOST}:{PORT}')
+    # Enlazar el socket al puerto
+    server_socket.bind((server_ip, server_port))
 
-    # Escuchar por conexiones entrantes
-    server_socket.listen()
+    # Escuchar conexiones entrantes
+    server_socket.listen(1)
 
-    # Aceptar la conexión entrante
-    conn, addr = server_socket.accept()
-    print(f'Cliente conectado desde {addr}')
+    print(f"Servidor TCP en ejecución en {server_ip}:{server_port}")
 
     while True:
-        # Recibir datos del cliente
-        data = conn.recv(1024)
-        if not data:
-            break
+        # Esperar por una conexión
+        print("Esperando conexión...")
+        connection, client_address = server_socket.accept()
 
-        # Procesar los datos recibidos como se desee
+        try:
+            print(f"Conexión establecida desde {client_address}")
 
-        # Responder al cliente
-        response = 'Paquete ICMP recibido por el servidor'
-        conn.sendall(response.encode())
+            while True:
+                # Recibir datos del cliente
+                data = connection.recv(1024)
+                if data:
+                    # Obtener el tiempo actual
+                    start_time = int(time.time() * 1000)
 
-    # Cerrar la conexión
-    conn.close()
+                    # Obtener información del cliente
+                    client_ip = client_address[0]
+
+                    # Decodificar los datos recibidos
+                    icmp_seq = data.decode("utf-8")
+
+                    # Construir la respuesta
+                    response = f"Tamaño del paquete recibido: {len(icmp_seq)}, Direccion IP del cliente: {client_ip}, ICMP_SEQ={icmp_seq}, TIME={start_time} ms"
+
+                    # Enviar la respuesta al cliente
+                    connection.sendall(response.encode("utf-8"))
+                else:
+                    break
+        finally:
+            # Cerrar la conexión
+            connection.close()
+
+if __name__ == "__main__":
+    main()

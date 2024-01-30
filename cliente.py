@@ -1,26 +1,44 @@
 import socket
+import time
 
-# Solicitar al usuario ingresar el puerto
-while True:
-    try:
-        PORT = int(input("Ingrese el puerto del servidor: "))
-        break
-    except ValueError:
-        print("Por favor, ingrese un número válido para el puerto.")
+def main():
+    # Solicitar al usuario ingresar la dirección IP del servidor y el puerto
+    server_ip = input("Ingrese la dirección IP del servidor: ")
+    server_port = int(input("Ingrese el puerto del servidor: "))
 
-# Configuración del servidor
-HOST = '127.0.0.1'  # Dirección IP del servidor
+    # Crear un socket TCP/IP
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Crear un socket TCP
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-    # Conectar al servidor
-    client_socket.connect((HOST, PORT))
+    # Conectar el socket al servidor
+    client_socket.connect((server_ip, server_port))
 
+    print(f"Conectado al servidor {server_ip}:{server_port}")
+
+    icmp_seq = 0
     while True:
-        # Enviar paquete ICMP simulado al servidor
-        message = 'Mensaje simulado ICMP'
-        client_socket.sendall(message.encode())
+        # Incrementar el número de secuencia ICMP
+        icmp_seq += 1
 
-        # Recibir la respuesta del servidor
-        data = client_socket.recv(1024)
-        print(f'Respuesta del servidor: {data.decode()}')
+        # Construir el mensaje ICMP simulado
+        message = f"ICMP_SEQ={icmp_seq}"
+
+        # Enviar el mensaje al servidor
+        client_socket.sendall(message.encode("utf-8"))
+
+        # Esperar la respuesta del servidor
+        response = client_socket.recv(1024).decode("utf-8")
+
+        # Obtener el tiempo actual
+        end_time = int(time.time() * 1000)
+
+        print(f"Respuesta del servidor: {response}")
+
+        # Esperar un tiempo antes de enviar el próximo paquete (opcional)
+        time.sleep(1)
+
+    # Cerrar el socket del cliente
+    client_socket.close()
+
+if __name__ == "__main__":
+    main()
+
