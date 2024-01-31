@@ -3,7 +3,7 @@ import time
 import signal
 import sys
 
-global num_sent, num_received, total_time, min_time, max_time
+
 
 # Contadores para las estadísticas
 num_sent = 0
@@ -26,17 +26,15 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 def main():
+    global num_sent, num_received, total_time, min_time, max_time
+
     # Solicitar al usuario ingresar el puerto del servidor
     server_port = int(input("Ingrese el puerto del servidor: "))
-
-
-
 
     # Crear un socket UDP/IP
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     print(f"Cliente UDP en ejecución")
-    num_received = 0
     icmp_seq = 0
     while True:
         # Incrementar el número de secuencia ICMP
