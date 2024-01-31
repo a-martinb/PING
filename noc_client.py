@@ -51,14 +51,15 @@ def main():
         data, server_address = client_socket.recvfrom(1024)
         end_time = time.time()
         response = data.decode("utf-8")
-        # Estadísticas
-            num_received += 1
-            rtt = (end_time - start_time) * 1000
-            total_time += rtt
-            if rtt < min_time:
-                min_time = rtt
-            if rtt > max_time:
-                max_time = rtt
+        #Estadisticas
+        if response:
+                num_received += 1
+                rtt = (end_time - start_time) * 1000
+                total_time += rtt
+                if rtt < min_time:
+                    min_time = rtt
+                if rtt > max_time:
+                    max_time = rtt
         # Obtener el tiempo actual
         end_time = int(time.time() * 1000)
 
