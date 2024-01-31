@@ -27,6 +27,8 @@ def main():
     # Solicitar al usuario ingresar el puerto del servidor
     server_port = int(input("Ingrese el puerto del servidor: "))
 
+global num_sent, num_received, total_time, min_time, max_time
+
 
     # Crear un socket UDP/IP
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
