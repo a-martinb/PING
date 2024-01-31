@@ -11,6 +11,7 @@ num_received = 0
 total_time = 0.0
 min_time = float('inf')
 max_time = 0.0
+global num_sent, num_received, total_time, min_time, max_time
 
 def signal_handler(sig, frame):
     print(f"\n{SERVER_IP} ping statistics ---")
@@ -23,9 +24,9 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 def main():
-     global num_sent, num_received, total_time, min_time, max_time
     # Solicitar al usuario ingresar el puerto del servidor
     server_port = int(input("Ingrese el puerto del servidor: "))
+
 
     # Crear un socket UDP/IP
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
