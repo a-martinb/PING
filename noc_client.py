@@ -67,7 +67,7 @@ def main():
 
         # Esperar un tiempo antes de enviar el próximo paquete (opcional)
         time.sleep(1)
-     except KeyboardInterrupt:
+except KeyboardInterrupt:
     signal_handler(signal.SIGINT, None)
 
 if __name__ == "__main__":
