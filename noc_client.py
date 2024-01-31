@@ -36,7 +36,7 @@ def main():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     print(f"Cliente UDP en ejecución")
-
+    num_received = 0
     icmp_seq = 0
     while True:
         # Incrementar el número de secuencia ICMP
