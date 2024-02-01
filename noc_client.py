@@ -67,10 +67,10 @@ def main():
 
         # Esperar un tiempo antes de enviar el próximo paquete (opcional)
         time.sleep(1)
-try:
+    try:
     # Código que puede generar excepciones
-except KeyboardInterrupt:
+    except KeyboardInterrupt:
     # Manejo de la interrupción del teclado
-    signal_handler(signal.SIGINT, None)
+        signal_handler(signal.SIGINT, None)
 if __name__ == "__main__":
     main()
