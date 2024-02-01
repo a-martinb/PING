@@ -67,7 +67,7 @@ def main():
 
         # Esperar un tiempo antes de enviar el próximo paquete (opcional)
         time.sleep(1)
-    try:
+try:
     # Código que puede generar excepciones
         pass
     except KeyboardInterrupt:
