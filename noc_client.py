@@ -75,4 +75,4 @@ def main():
         signal_handler(signal.SIGINT, None)
 
 if __name__ == "__main__":
-    main()s
+    main()
