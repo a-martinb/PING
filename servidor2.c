@@ -75,9 +75,10 @@ int main() {
         ssize_t bytes_sent = send(client_socket, message, strlen(message), 0);
         if (bytes_sent < 0) {
             perror("Error al enviar la respuesta al cliente");
+            continue;
         }
 
-        // No cerrar el socket del cliente para permitir la recepción de más paquetes
+        
 
     }
 
