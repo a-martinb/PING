@@ -1,36 +1,77 @@
 import socket
 import time
+import signal
+import sys
+
+
+
+# Contadores para las estadísticas
+num_sent = 0
+num_received = 0
+
+# Tiempos para el cálculo del tiempo medio
+total_time = 0.0
+min_time = float('inf')
+max_time = 0.0
+
+
+def signal_handler(sig, frame):
+    print(f"\n{SERVER_IP} ping statistics ---")
+    print(f"{num_sent} packets transmitted, {num_received} packets received, {(1 - (num_received / num_sent)) * 100}% packet loss")
+    if num_received > 0:
+        avg_time = total_time / num_received
+        print(f"round-trip min/avg/max/mdev = {min_time:.3f}/{avg_time:.3f}/{max_time:.3f} ms")
+    else:
+        print("round-trip min/avg/max/mdev = N/A")
+    sys.exit(0)
 
 def main():
+    global num_sent, num_received, total_time, min_time, max_time
+
     # Solicitar al usuario ingresar el puerto del servidor
     server_port = int(input("Ingrese el puerto del servidor: "))
 
     # Crear un socket UDP/IP
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    # Enlazar el socket al puerto
-    server_socket.bind(('localhost', server_port))
-
-    print(f"Servidor UDP en ejecución en el puerto {server_port}")
-
+    print(f"Cliente UDP en ejecución")
+    icmp_seq = 0
     while True:
-        # Recibir datos del cliente
-        data, client_address = server_socket.recvfrom(1024)
+        # Incrementar el número de secuencia ICMP
+        icmp_seq += 1
 
+        # Construir el mensaje ICMP simulado
+        message = f"ICMP_SEQ={icmp_seq}"
+
+        # Enviar el mensaje al servidor
+        start_time = time.time()
+        client_socket.sendto(message.encode("utf-8"), ('localhost', server_port))
+        num_received +=1
+        # Recibir la respuesta del servidor
+        data, server_address = client_socket.recvfrom(1024)
+        end_time = time.time()
+        response = data.decode("utf-8")
+        #Estadisticas
+        if response:
+                num_received += 1
+                rtt = (end_time - start_time) * 1000
+                total_time += rtt
+                if rtt < min_time:
+                    min_time = rtt
+                if rtt > max_time:
+                    max_time = rtt
         # Obtener el tiempo actual
-        start_time = int(time.time() * 1000)
+        end_time = int(time.time() * 1000)
 
-        # Obtener información del cliente
-        client_ip = client_address[0]
+        print(f"Respuesta del servidor: {response}")
 
-        # Decodificar los datos recibidos
-        icmp_seq = data.decode("utf-8")
-
-        # Construir la respuesta
-        response = f"Tamaño del paquete recibido: {len(icmp_seq)}, Direccion IP del cliente: {client_ip}, ICMP_SEQ={icmp_seq}, TIME={start_time} ms"
-
-        # Enviar la respuesta al cliente
-        server_socket.sendto(response.encode("utf-8"), client_address)
+        # Esperar un tiempo antes de enviar el próximo paquete 
+        time.sleep(1)
+    try:
+        pass
+    except KeyboardInterrupt:
+    # Manejo de la interrupción del teclado
+        signal_handler(signal.SIGINT, None)
 
 if __name__ == "__main__":
     main()
