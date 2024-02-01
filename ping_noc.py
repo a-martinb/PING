@@ -65,10 +65,9 @@ def main():
 
         print(f"Respuesta del servidor: {response}")
 
-        # Esperar un tiempo antes de enviar el próximo paquete (opcional)
+        # Esperar un tiempo antes de enviar el próximo paquete 
         time.sleep(1)
     try:
-    # Código que puede generar excepciones
         pass
     except KeyboardInterrupt:
     # Manejo de la interrupción del teclado
