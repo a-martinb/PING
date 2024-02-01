@@ -69,8 +69,10 @@ def main():
         time.sleep(1)
     try:
     # Código que puede generar excepciones
+        pass
     except KeyboardInterrupt:
     # Manejo de la interrupción del teclado
         signal_handler(signal.SIGINT, None)
+
 if __name__ == "__main__":
     main()
