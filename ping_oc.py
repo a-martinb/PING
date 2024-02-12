@@ -14,13 +14,13 @@ def main():
 
     print(f"Conectado al servidor {server_ip}:{server_port}")
 
-    icmp_seq = 0
+    seq = 0
     while True:
         # Incrementar el número de secuencia ICMP
-        icmp_seq += 1
+        seq += 1
 
-        # Construir el mensaje ICMP simulado
-        message = f"ICMP_SEQ={icmp_seq}"
+        # Construir el mensaje 
+        message = f"SEQ={seq}"
 
         # Enviar el mensaje al servidor
         client_socket.sendall(message.encode("utf-8"))
@@ -28,6 +28,7 @@ def main():
         # Esperar la respuesta del servidor
         response = client_socket.recv(1024).decode("utf-8")
 
+        
         print(f"Respuesta del servidor: {response}")
 
         # Esperar un tiempo antes de enviar el próximo paquete (opcional)

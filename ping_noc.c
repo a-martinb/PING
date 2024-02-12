@@ -34,10 +34,10 @@ int main() {
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(ip);
 
-    
+     int icmp_seq = 0;
     while (1) {
         // Incrementar el número de secuencia ICMP
-        int icmp_seq = 0;
+        
         icmp_seq++;
 
         // Construir el mensaje ICMP simulado
@@ -58,6 +58,7 @@ int main() {
 
         // Esperar un tiempo antes de enviar el próximo paquete (opcional)
         sleep(1);
+        
     }
 
     close(client_socket);

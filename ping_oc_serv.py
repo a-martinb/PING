@@ -33,10 +33,10 @@ def main():
                     client_ip = client_address[0]
 
                     # Decodificar los datos recibidos
-                    icmp_seq = data.decode("utf-8")
+                    seq = data.decode("utf-8")
 
                     # Construir la respuesta
-                    response = f"Tamaño del paquete recibido: {len(icmp_seq)}, Direccion IP del cliente: {client_ip}, ICMP_SEQ={icmp_seq},"
+                    response = f"Tamaño del paquete recibido: {len(seq)}, Direccion IP del cliente: {client_ip}, SEQ={seq},"
 
                     # Enviar la respuesta al cliente
                     connection.sendall(response.encode("utf-8"))

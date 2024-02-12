@@ -49,7 +49,7 @@ int main() {
         // Incrementar el número de secuencia ICMP
         icmp_seq++;
 
-        // Construir el mensaje ICMP simulado
+        // Construir el mensaje 
         snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
 
         // Enviar el mensaje al servidor
