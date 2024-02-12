@@ -20,7 +20,7 @@ def main():
         seq += 1
 
         # Construir el mensaje 
-        message = f"SEQ={seq}"
+        message = f"{seq}"
 
         # Enviar el mensaje al servidor
         client_socket.sendall(message.encode("utf-8"))
