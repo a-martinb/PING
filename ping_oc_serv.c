@@ -66,7 +66,7 @@ int main() {
 
 
         // Construir la respuesta al cliente
-        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%d, TIME=%ld ms", bytes_received, inet_ntoa(client_addr.sin_addr), 0);
+        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%d, bytes_received, inet_ntoa(client_addr.sin_addr), 0);
 
         // Enviar la respuesta al cliente
         ssize_t bytes_sent = send(client_socket, message, strlen(message), 0);
