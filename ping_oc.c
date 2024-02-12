@@ -60,7 +60,11 @@ int main() {
 
         // Esperar la respuesta del servidor
         memset(message, 0, sizeof(message));
-        recv(client_socket, message, MAX_BUF_SIZE, 0); 
+        if (recv(client_socket, message, MAX_BUF_SIZE, 0); )==-1){
+        perror("Error al recibir datos del servidor");
+        exit(EXIT_FAILURE);
+        }   
+
 
         // Imprimir la respuesta del servidor
         printf("Respuesta del servidor: %s\n", message);
