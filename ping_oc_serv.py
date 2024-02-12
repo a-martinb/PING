@@ -3,7 +3,7 @@ import time
 
 def main():
     # Solicitar al usuario ingresar la dirección IP del servidor y el puerto
-    server_ip = input("Ingrese la dirección IP del servidor: ")
+    server_ip = "127.0.0.1"
     server_port = int(input("Ingrese el puerto del servidor: "))
 
     # Crear un socket TCP/IP
@@ -29,9 +29,6 @@ def main():
                 # Recibir datos del cliente
                 data = connection.recv(1024)
                 if data:
-                    # Obtener el tiempo actual
-                    start_time = int(time.time() * 1000)
-
                     # Obtener información del cliente
                     client_ip = client_address[0]
 
@@ -39,7 +36,7 @@ def main():
                     icmp_seq = data.decode("utf-8")
 
                     # Construir la respuesta
-                    response = f"Tamaño del paquete recibido: {len(icmp_seq)}, Direccion IP del cliente: {client_ip}, ICMP_SEQ={icmp_seq}, TIME={start_time} ms"
+                    response = f"Tamaño del paquete recibido: {len(icmp_seq)}, Direccion IP del cliente: {client_ip}, ICMP_SEQ={icmp_seq},"
 
                     # Enviar la respuesta al cliente
                     connection.sendall(response.encode("utf-8"))

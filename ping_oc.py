@@ -28,9 +28,6 @@ def main():
         # Esperar la respuesta del servidor
         response = client_socket.recv(1024).decode("utf-8")
 
-        # Obtener el tiempo actual
-        end_time = int(time.time() * 1000)
-
         print(f"Respuesta del servidor: {response}")
 
         # Esperar un tiempo antes de enviar el próximo paquete (opcional)
