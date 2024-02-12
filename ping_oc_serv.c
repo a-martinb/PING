@@ -3,66 +3,84 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/time.h>
 
-#define PORT 12345 // Puerto superior a 1023
-#define BACKLOG 5
-#define BUFFER_SIZE 1024
-
-void handle_error(const char *message) {
-    perror(message);
-    exit(EXIT_FAILURE);
-}
+#define MAX_BUF_SIZE 2048 // Aumentamos el tamaño del buffer
 
 int main() {
-    int sockfd, client_sockfd, recv_len;
-    struct sockaddr_in serv_addr, client_addr;
-    socklen_t addr_len = sizeof(client_addr);
-    char buffer[BUFFER_SIZE];
+    int server_socket, client_socket;
+    struct sockaddr_in server_addr, client_addr;
+    char message[MAX_BUF_SIZE];
+    int port;
 
-    // Crear socket TCP
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-        handle_error("Error al crear el socket");
-        
+    // Solicitar al usuario ingresar el puerto del servidor
+    printf("Ingrese el puerto del servidor: ");
+    scanf("%d", &port);
+
+    // Crear el socket TCP
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket < 0) {
+        perror("Error al crear el socket del servidor");
+        exit(EXIT_FAILURE);
     }
 
-    // Configurar dirección del servidor
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(PORT);
+    // Configurar la dirección del servidor
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_addr.sin_port = htons(port);
 
     // Enlazar el socket a la dirección y puerto
-    if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {
-        handle_error("Error al enlazar el socket");
+    if (bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Error al enlazar el socket del servidor");
+        exit(EXIT_FAILURE);
     }
 
-    // Escuchar por conexiones entrantes
-    if (listen(sockfd, BACKLOG) == -1) {
-        handle_error("Error al escuchar por conexiones entrantes");
+    // Escuchar conexiones entrantes
+    if (listen(server_socket, 5) < 0) {
+        perror("Error al intentar escuchar en el socket");
+        exit(EXIT_FAILURE);
     }
 
-    printf("Servidor TCP en ejecución en el puerto %d...\n", PORT);
+    printf("Servidor TCP en ejecución en el puerto %d\n", port);
 
-    // Aceptar conexiones entrantes
-    if ((client_sockfd = accept(sockfd, (struct sockaddr *)&client_addr, &addr_len)) == -1) {
-        handle_error("Error al aceptar la conexión entrante");
+    while (1) {
+        // Aceptar la conexión entrante
+        socklen_t client_addr_len = sizeof(client_addr);
+        client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_addr_len);
+        if (client_socket < 0) {
+            perror("Error al aceptar la conexión del cliente");
+            continue;
+        }
+
+        // Recibir datos del cliente
+        memset(message, 0, sizeof(message));
+        ssize_t bytes_received = recv(client_socket, message, MAX_BUF_SIZE, 0);
+        if (bytes_received < 0) {
+            perror("Error al recibir datos del cliente");
+            close(client_socket);
+            continue;
+        }
+
+
+
+        // Construir la respuesta al cliente
+        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%d, TIME=%ld ms", bytes_received, inet_ntoa(client_addr.sin_addr), 0, start_time);
+
+        // Enviar la respuesta al cliente
+        ssize_t bytes_sent = send(client_socket, message, strlen(message), 0);
+        if (bytes_sent < 0) {
+            perror("Error al enviar la respuesta al cliente");
+            continue;
+        }
+
+        
+
     }
 
-    printf("Cliente conectado desde %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-
-    // Enviar datos al cliente
-    char *data = "Bienvenido al servidor TCP";
-    if (send(client_sockfd, data, strlen(data), 0) == -1) {
-        handle_error("Error al enviar datos al cliente");
-    }
-
-    printf("Datos enviados al cliente\n");
-
-    // Cerrar sockets
-    close(client_sockfd);
-    close(sockfd);
+    // Cerrar el socket del servidor (este código nunca se ejecutará en este bucle)
+    close(server_socket);
 
     return 0;
 }
-
