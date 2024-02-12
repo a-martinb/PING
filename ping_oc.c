@@ -66,12 +66,10 @@ int main() {
          exit(EXIT_FAILURE);
         }   
 
-
         // Imprimir la respuesta del servidor
         printf("Respuesta del servidor: %s\n", message);
 
-        // Esperar un tiempo antes de enviar el próximo paquete (opcional)
-        sleep(1);
+    
     }
 
     // Cerrar el socket del cliente
