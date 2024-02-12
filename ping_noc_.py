@@ -3,7 +3,7 @@ import time
 
 def main():
     # Configuración del cliente
-    ip = input("Ingrese la dirección IP del servidor: ")
+    host = input("Ingrese la dirección IP del servidor: ")
     port = int(input("Ingrese el puerto del servidor: "))
 
 
