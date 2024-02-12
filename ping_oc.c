@@ -3,64 +3,77 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <netinet/in.h>
+#include <sys/socket.h>
 
-#define PORT 12345 // Mismo puerto que el servidor
-#define BUFFER_SIZE 1024
+#define MAX_BUF_SIZE 1024
 
-void handle_error(const char *message) {
-    perror(message);
-    exit(EXIT_FAILURE);
-}
+int main() {
+    int client_socket;
+    struct sockaddr_in server_addr;
+    char message[MAX_BUF_SIZE];
+    int port;
+    char ip[16];
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Uso: %s <mensaje>\n", argv[0]);
+    // Solicitar al usuario ingresar la dirección IP del servidor
+    printf("Ingrese la dirección IP del servidor: ");
+    scanf("%s", ip);
+
+    // Solicitar al usuario ingresar el puerto del servidor
+    printf("Ingrese el puerto del servidor: ");
+    scanf("%d", &port);
+
+    // Crear el socket TCP
+    client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (client_socket < 0) {
+        perror("Error al crear el socket del cliente");
         exit(EXIT_FAILURE);
     }
 
-    int sockfd, recv_len;
-    struct sockaddr_in serv_addr;
-    char buffer[BUFFER_SIZE];
-
-    // Crear socket TCP
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
-        handle_error("Error al crear el socket");
-    }
-
-    // Configurar dirección del servidor
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
-        handle_error("Dirección IP no válida");
-    }
+    // Configurar la dirección del servidor
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(port);
+    server_addr.sin_addr.s_addr = inet_addr(ip);
 
     // Conectar al servidor
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {
-        handle_error("Error al conectar al servidor");
+    if (connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Error al conectar con el servidor");
+        exit(EXIT_FAILURE);
     }
 
-    printf("Conexión establecida con el servidor en %s:%d\n", "127.0.0.1", PORT);
+    printf("Conectado al servidor\n");
 
-    // Enviar datos al servidor
-    if (send(sockfd, argv[1], strlen(argv[1]), 0) == -1) {
-        handle_error("Error al enviar datos al servidor");
+    // Enviar y recibir paquetes ICMP al servidor
+    int icmp_seq = 0;
+    while (1) {
+        // Incrementar el número de secuencia ICMP
+        icmp_seq++;
+
+        // Construir el mensaje ICMP simulado
+        snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
+
+        // Enviar el mensaje al servidor
+        if (send(client_socket, message, strlen(message), 0) < 0) {
+            perror("Error al enviar el mensaje al servidor");
+            exit(EXIT_FAILURE);
+        }
+
+        // Esperar la respuesta del servidor
+        memset(message, 0, sizeof(message));
+        recv(client_socket, message, MAX_BUF_SIZE, 0); 
+
+        // Imprimir la respuesta del servidor
+        printf("Respuesta del servidor: %s\n", message);
+
+        // Esperar un tiempo antes de enviar el próximo paquete (opcional)
+        sleep(1);
     }
 
-    printf("Datos enviados al servidor: %s\n", argv[1]);
-
-    // Recibir respuesta del servidor
-    if ((recv_len = recv(sockfd, buffer, BUFFER_SIZE, 0)) == -1) {
-        handle_error("Error al recibir respuesta del servidor");
-    }
-
-    buffer[recv_len] = '\0'; // Agregar terminador de cadena
-    printf("Respuesta recibida del servidor: %s\n", buffer);
-
-    // Cerrar socket
-    close(sockfd);
+    // Cerrar el socket del cliente
+    close(client_socket);
 
     return 0;
 }
+
+
 

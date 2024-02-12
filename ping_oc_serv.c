@@ -23,6 +23,7 @@ int main() {
     // Crear socket TCP
     if ((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
         handle_error("Error al crear el socket");
+        
     }
 
     // Configurar dirección del servidor
