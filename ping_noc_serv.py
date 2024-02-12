@@ -1,47 +1,30 @@
 import socket
-import time
-import signal
-import sys
-
-
-
-# Contadores para las estadísticas
-num_sent = 0
-num_received = 0
-
 
 def main():
-    global num_sent, num_received, total_time;
-
-    # Solicitar al usuario ingresar el puerto del servidor
-    server_port = int(input("Ingrese el puerto del servidor: "))
+    # Configuración del servidor
+   
 
     # Crear un socket UDP/IP
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    print(f"Cliente UDP en ejecución")
-    icmp_seq = 0
+    # Enlazar el socket al host y al puerto
+    server_socket.bind((host, port))
+
+    print(f"Servidor UDP Ping en ejecución en {host}:{port}")
+
     while True:
-        # Incrementar el número de secuencia ICMP
-        icmp_seq += 1
+        # Recibir datos del cliente
+        data, client_address = server_socket.recvfrom(1024)
 
-        # Construir el mensaje 
-        message = f"ICMP_SEQ={icmp_seq}"
+        # Obtener el tamaño del paquete
+        packet_size = len(data)
 
-        # Enviar el mensaje al servidor
-        start_time = time.time()
-        client_socket.sendto(message.encode("utf-8"), ('localhost', server_port))
-        num_received +=1
-        # Recibir la respuesta del servidor
-        data, server_address = client_socket.recvfrom(1024)
-    
-        response = data.decode("utf-8")
-        #Estadisticas
+        # Obtener la dirección IP del cliente
+        client_ip = client_address[0]
 
-        print(f"Respuesta del servidor: {response}")
-
-        # Esperar un tiempo antes de enviar el próximo paquete 
-        time.sleep(1)
+        # Enviar respuesta al cliente con el tamaño del paquete, el número de paquete y la dirección IP
+        response = f"Tamaño del paquete: {packet_size} bytes, Número de paquete: {data.decode()}, Dirección IP del cliente: {client_ip}"
+        server_socket.sendto(response.encode(), client_address)
 
 if __name__ == "__main__":
     main()

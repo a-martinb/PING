@@ -2,35 +2,35 @@ import socket
 import time
 
 def main():
-    # Solicitar al usuario ingresar el puerto del servidor
-    server_port = int(input("Ingrese el puerto del servidor: "))
+    # Configuración del cliente
+    ip = input("Ingrese la dirección IP del servidor: ")
+    port = int(input("Ingrese el puerto del servidor: "))
+
 
     # Crear un socket UDP/IP
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    # Enlazar el socket al puerto
-    server_socket.bind(('localhost', server_port))
+    print(f"Cliente UDP Ping conectado al servidor {host}:{port}")
 
-    print(f"Servidor UDP en ejecución en el puerto {server_port}")
+    # Número de paquete inicial
+    packet_number = 0
 
     while True:
-        # Recibir datos del cliente
-        data, client_address = server_socket.recvfrom(1024)
+        # Incrementar el número de paquete
+        packet_number += 1
 
-        # Obtener el tiempo actual
-        start_time = int(time.time() * 1000)
+        # Construir el mensaje a enviar al servidor (simula el número de paquete)
+        message = str(packet_number)
 
-        # Obtener información del cliente
-        client_ip = client_address[0]
+        # Enviar datos al servidor
+        client_socket.sendto(message.encode(), (host, port))
 
-        # Decodificar los datos recibidos
-        icmp_seq = data.decode("utf-8")
+        # Recibir respuesta del servidor
+        data, server_address = client_socket.recvfrom(1024)
+        print(f"Respuesta del servidor: {data.decode()}")
 
-        # Construir la respuesta
-        response = f"Tamaño del paquete recibido: {len(icmp_seq)}, Direccion IP del cliente: {client_ip}, ICMP_SEQ={icmp_seq}, TIME={start_time} ms"
-
-        # Enviar la respuesta al cliente
-        server_socket.sendto(response.encode("utf-8"), client_address)
+        # Esperar un segundo antes de enviar el siguiente paquete (simula el ping)
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
