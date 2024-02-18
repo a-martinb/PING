@@ -45,6 +45,9 @@ def main():
         finally:
             # Cerrar la conexión
             connection.close()
-
+        except KeyboardInterrupt:
+        print("Se ha presionado Ctrl + C. Saliendo del bucle.")
+        break
+        
 if __name__ == "__main__":
     main()
