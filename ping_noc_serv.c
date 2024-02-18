@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <time.h>
 
 #define MAX_BUF_SIZE 2048 // Aumentamos el tamaño del buffer
 
@@ -12,6 +13,9 @@ int main() {
     struct sockaddr_in server_addr, client_addr;
     char message[MAX_BUF_SIZE];
     int port;
+    clock_t start, end;
+    double elapsed_time;
+
 
     // Solicitar al usuario ingresar el puerto del servidor
     printf("Ingrese el puerto del servidor: ");
@@ -48,16 +52,16 @@ int main() {
             continue;
         }
 
-        // Obtener el tiempo actual
-        struct timeval tv;
-        gettimeofday(&tv, NULL);
-        long start_time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+        start = clock();
+
+        end = clock();
+        elapsed_time = ((double)(end - start)) * 1000 / CLOCKS_PER_SEC;
 
         // Construir la respuesta al cliente
-        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%zd, TIME=%ld ms", bytes_received, inet_ntoa(client_addr.sin_addr), bytes_received, start_time);
-
+        snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%zd, TIME=%.2f ms", bytes_received, inet_ntoa(client_addr.sin_addr), bytes_received, elapsed_time);
+        //sendto(sockfd, (const char *)&elapsed_time, sizeof(elapsed_time), 0, (const struct sockaddr *)&client_addr, client_len);
         // Enviar la respuesta al cliente
-        ssize_t bytes_sent = sendto(server_socket, message, strlen(message), 0, (struct sockaddr*)&client_addr, sizeof(client_addr));
+        ssize_t bytes_sent = sendto(server_socket, message, strlen(message), 0, (struct sockaddr*)&client_addr, sizeof(client_addr),sockfd, (const char *)&elapsed_time, sizeof(elapsed_time),);
         if (bytes_sent < 0) {
             perror("Error al enviar la respuesta al cliente");
             continue;
