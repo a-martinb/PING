@@ -12,8 +12,6 @@ int main() {
     char message[MAX_BUF_SIZE];
     int port;
     char ip[16];
-    double elapsed_time;
-
 
     // Solicitar al usuario ingresar la dirección IP del servidor
     printf("Ingrese la dirección IP del servidor: ");
@@ -53,7 +51,7 @@ int main() {
 
         // Esperar la respuesta del servidor
         memset(message, 0, sizeof(message));
-        recvfrom(client_socket, message, MAX_BUF_SIZE, (char *)&elapsed_time, sizeof(elapsed_time), 0, NULL, NULL);
+        recvfrom(client_socket, message, MAX_BUF_SIZE, 0, NULL, NULL);
 
         // Imprimir la respuesta del servidor
         printf("Respuesta del servidor: %s\n", message);
