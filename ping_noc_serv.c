@@ -61,7 +61,7 @@ int main() {
         snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%zd, TIME=%.2f ms", bytes_received, inet_ntoa(client_addr.sin_addr), bytes_received, elapsed_time);
         //sendto(sockfd, (const char *)&elapsed_time, sizeof(elapsed_time), 0, (const struct sockaddr *)&client_addr, client_len);
         // Enviar la respuesta al cliente
-        ssize_t bytes_sent = sendto(server_socket, message, strlen(message), 0, (struct sockaddr*)&client_addr, sizeof(client_addr), (const char *)&elapsed_time, sizeof(elapsed_time),);
+        ssize_t bytes_sent = sendto(server_socket, message, strlen(message), 0, (struct sockaddr*)&client_addr, sizeof(client_addr), (const char *)&elapsed_time, sizeof(elapsed_time),0);
         if (bytes_sent < 0) {
             perror("Error al enviar la respuesta al cliente");
             continue;
