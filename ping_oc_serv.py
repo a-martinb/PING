@@ -42,12 +42,13 @@ def main():
                     connection.sendall(response.encode("utf-8"))
                 else:
                     break
+        except KeyboardInterrupt:
+            print("Se ha presionado Ctrl + C. Saliendo del bucle.")
+            break
         finally:
             # Cerrar la conexión
             connection.close()
-        except KeyboardInterrupt:
-        print("Se ha presionado Ctrl + C. Saliendo del bucle.")
-        break
-        
+
 if __name__ == "__main__":
     main()
+
