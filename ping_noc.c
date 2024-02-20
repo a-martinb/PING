@@ -34,14 +34,11 @@ int main() {
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(ip);
 
-     int icmp_seq = 0;
     while (1) {
-        // Incrementar el número de secuencia ICMP
-        
-        icmp_seq++;
 
         // Construir el mensaje ICMP simulado
-        snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
+        //snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
+        snprintf(message, MAX_BUF_SIZE);
 
         // Enviar el mensaje al servidor
         if (sendto(client_socket, message, strlen(message), 0, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
