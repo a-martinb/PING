@@ -12,7 +12,7 @@ int main() {
     struct sockaddr_in server_addr, client_addr;
     char message[MAX_BUF_SIZE];
     int port;
-    icmp_seq = 0;
+    int icmp_seq = 0;
 
     // Solicitar al usuario ingresar el puerto del servidor
     printf("Ingrese el puerto del servidor: ");
