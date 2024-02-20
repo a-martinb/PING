@@ -13,6 +13,7 @@ int main() {
     struct sockaddr_in server_addr, client_addr;
     char message[MAX_BUF_SIZE];
     int port;
+    int icmp_seq = 0;
 
     // Solicitar al usuario ingresar el puerto del servidor
     printf("Ingrese el puerto del servidor: ");
@@ -64,7 +65,7 @@ int main() {
         }
 
  
-
+        icmp_seq++;
         // Construir la respuesta al cliente
         snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%d", bytes_received, inet_ntoa(client_addr.sin_addr),icmp_seq);
 
