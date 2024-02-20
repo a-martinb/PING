@@ -41,7 +41,7 @@ int main() {
         icmp_seq++;
 
         // Construir el mensaje ICMP simulado
-        //snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
+        snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
 
         // Enviar el mensaje al servidor
         if (sendto(client_socket, message, strlen(message), 0, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {

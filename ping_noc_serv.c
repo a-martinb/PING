@@ -37,7 +37,7 @@ int main() {
     }
 
     printf("Servidor UDP en ejecución en el puerto %d\n", port);
-    int icmp_seq;   
+   
     while (1) {
         // Recibir datos del cliente
         socklen_t client_addr_len = sizeof(client_addr);
@@ -47,9 +47,8 @@ int main() {
             perror("Error al recibir datos del cliente");
             continue;
         }
-        icmp_seq++;
-        //int icmp_seq;
-       // sscanf(message, "Paquete ICMP_SEQ=%d", &icmp_seq);
+        
+    
 
         // Construir la respuesta al cliente
         snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%d", bytes_received, inet_ntoa(client_addr.sin_addr),icmp_seq);
