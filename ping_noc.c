@@ -12,6 +12,7 @@ int main() {
     char message[MAX_BUF_SIZE];
     int port;
     char ip[16];
+    int icmp_seq =0;
 
     // Solicitar al usuario ingresar la dirección IP del servidor
     printf("Ingrese la dirección IP del servidor: ");
@@ -37,8 +38,8 @@ int main() {
     while (1) {
 
         // Construir el mensaje ICMP simulado
-        //snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
-        snprintf(message, MAX_BUF_SIZE);
+        icmp_seq++;
+        snprintf(message, MAX_BUF_SIZE, "Paquete ICMP_SEQ=%d", icmp_seq);
 
         // Enviar el mensaje al servidor
         if (sendto(client_socket, message, strlen(message), 0, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
