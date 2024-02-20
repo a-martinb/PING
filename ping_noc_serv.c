@@ -12,6 +12,7 @@ int main() {
     struct sockaddr_in server_addr, client_addr;
     char message[MAX_BUF_SIZE];
     int port;
+    icmp_seq = 0;
 
     // Solicitar al usuario ingresar el puerto del servidor
     printf("Ingrese el puerto del servidor: ");
@@ -39,6 +40,7 @@ int main() {
     printf("Servidor UDP en ejecución en el puerto %d\n", port);
    
     while (1) {
+        icmp_seq++;
         // Recibir datos del cliente
         socklen_t client_addr_len = sizeof(client_addr);
         memset(message, 0, sizeof(message));
