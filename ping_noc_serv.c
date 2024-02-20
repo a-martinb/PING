@@ -48,6 +48,8 @@ int main() {
             continue;
         }
 
+        int icmp_seq;
+        sscanf(message, "Paquete ICMP_SEQ=%d", &icmp_seq);
 
         // Construir la respuesta al cliente
         snprintf(message, MAX_BUF_SIZE, "Tamaño del paquete recibido: %zd bytes, Direccion IP del cliente: %s, ICMP_SEQ=%zd", bytes_received, inet_ntoa(client_addr.sin_addr),icmp_seq);
