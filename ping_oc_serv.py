@@ -36,7 +36,7 @@ def main():
                     seq = data.decode("utf-8")
 
                     # Construir la respuesta
-                    response = f"Tamaño del paquete recibido: {len(seq)}, Direccion IP del cliente: {client_ip},SEQ={seq},"
+                    response = f"Tamaño del paquete recibido: {len(seq)} bytes, Direccion IP del cliente: {client_ip},SEQ={seq},"
 
                     # Enviar la respuesta al cliente
                     connection.sendall(response.encode("utf-8"))
