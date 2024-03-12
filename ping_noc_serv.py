@@ -2,7 +2,7 @@ import socket
 
 def main():
     # Configuración del servidor
-    host = "127.0.0.1"
+    host = "0.0.0.0"
     port = int(input("Ingrese el puerto del servidor: "))
 
     # Crear un socket UDP/IP
